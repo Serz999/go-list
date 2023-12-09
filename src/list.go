@@ -2,12 +2,17 @@ package list
 
 import (
 	"fmt"
+    "reflect"
+    "errors"
 )
 
 type List struct {
 	len       int64
 	firstNode *Node
 }
+
+
+var ErrMismatchType = errors.New("mismatched type: the type of the provided value does not match the type of items already in the storage")
 
 // NewList создает новый список
 func NewList() (l *List) {
@@ -22,7 +27,13 @@ func (l *List) Len() (len int64) {
 }
 
 // Add добавляет элемент в список и возвращает его индекс
-func (l *List) Add(value int64) (id int64) {
+func (l *List) Add(value interface{}) (id int64, err error) {
+    if l.len > 0 {
+        firstVal, _ := l.GetByIndex(0)
+        if reflect.TypeOf(value) != reflect.TypeOf(firstVal) {
+            return 0, ErrMismatchType   
+        }
+    }
 
 	l.len++
 
@@ -74,7 +85,7 @@ func (l *List) RemoveByIndex(id int64) {
 }
 
 // RemoveByValue удаляет элемент из списка по значению
-func (l *List) RemoveByValue(value int64) {
+func (l *List) RemoveByValue(value interface{}) {
 	node := l.firstNode
 	for node != nil {
 		if node.value == value {
@@ -86,7 +97,7 @@ func (l *List) RemoveByValue(value int64) {
 }
 
 // RemoveAllByValue удаляет все элементы из списка по значению
-func (l *List) RemoveAllByValue(value int64) {
+func (l *List) RemoveAllByValue(value interface{}) {
 	
 	for node := l.firstNode; node != nil; node = node.next {
 		if node.value == value {
@@ -98,7 +109,7 @@ func (l *List) RemoveAllByValue(value int64) {
 // GetByIndex возвращает значение элемента по индексу.
 //
 // Если элемента с таким индексом нет, то возвращается 0 и false.
-func (l *List) GetByIndex(id int64) (value int64, ok bool) {
+func (l *List) GetByIndex(id int64) (value interface{}, ok bool) {
 	
 	for node := l.firstNode; node != nil; node = node.next {
 		if node.index == id {
@@ -112,7 +123,7 @@ func (l *List) GetByIndex(id int64) (value int64, ok bool) {
 // GetByValue возвращает индекс первого найденного элемента по значению.
 //
 // Если элемента с таким значением нет, то возвращается 0 и false.
-func (l *List) GetByValue(value int64) (id int64, ok bool) {
+func (l *List) GetByValue(value interface{}) (id int64, ok bool) {
 	
 	for node := l.firstNode; node != nil; node = node.next {
 		if node.value == value {
@@ -126,7 +137,7 @@ func (l *List) GetByValue(value int64) (id int64, ok bool) {
 // GetAllByValue возвращает индексы всех найденных элементов по значению
 //
 // Если элементов с таким значением нет, то возвращается nil и false.
-func (l *List) GetAllByValue(value int64) (ids []int64, ok bool) {
+func (l *List) GetAllByValue(value interface{}) (ids []int64, ok bool) {
 	ids = nil
 	ok = false
 	
@@ -143,7 +154,7 @@ func (l *List) GetAllByValue(value int64) (ids []int64, ok bool) {
 // GetAll возвращает все элементы списка
 //
 // Если список пуст, то возвращается nil и false.
-func (l *List) GetAll() (values []int64, ok bool) {
+func (l *List) GetAll() (values []interface{}, ok bool) {
 	values = nil
 	ok = false
 	

@@ -56,6 +56,13 @@ func TestAdd(t *testing.T) {
             t.Errorf("got idxs %v, expected idxs %v", gotIdxs, tc.expectedIdxs)
         }
     }
+
+    list := NewList()
+    list.Add(1)
+    _, err := list.Add(bool)
+    if err == nil {
+        t.Errorf("Error throwing don't pass")
+    }
 }
 
 func TestLen(t *testing.T) {
