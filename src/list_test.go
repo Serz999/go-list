@@ -11,7 +11,7 @@ func (list *List) fill(nodesValues []int64) {
     }
 }
 
-func (list *List) getNodesContain() (values []int64, idxs []int64) {
+func (list *List) getNodesContain() (values []any, idxs []int64) {
     
     node := list.firstNode 
     for node != nil {
@@ -59,7 +59,7 @@ func TestAdd(t *testing.T) {
 
     list := NewList()
     list.Add(1)
-    _, err := list.Add(bool)
+    _, err := list.Add("SOMESTRING")
     if err == nil {
         t.Errorf("Error throwing don't pass")
     }
